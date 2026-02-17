@@ -19,7 +19,7 @@ const server = express();
 
 const path = require("path");
 // const stripe = require("stripe")(
-  
+  // I have made a .env file so i dont push my Stripe key
 // );
 
 require('dotenv').config();
