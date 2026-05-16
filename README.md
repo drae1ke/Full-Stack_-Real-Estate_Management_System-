@@ -1,85 +1,57 @@
-# 🏠 Real Estate Management System
+# Real Estate Management System
 
-A full-stack **MERN** project exploring both frontend & backend development.  
-Built with **MongoDB, Express, React, Node.js, and Tailwind CSS**.
+This repo is organized as two apps:
 
-This system allows users to browse and purchase properties, make secure payments via **Stripe**, generate invoices, and manage everything through an **admin panel**.
+- `backend`: Express + MongoDB API
+- `frontend`: React client
 
----
+## Local setup
 
-## 📸 Screenshots
+1. Install dependencies for both apps:
 
-| Dashboard | Properties Page |
-|----------|------------------|
-| ![](Dashboard.png) | ![](Properties%20Page.png) |
+```bash
+npm run install:all
+```
 
-| Property Details | User Registration |
-|------------------|-------------------|
-| ![](Add%20Property.png) | ![](User%20Resgistration.png) |
+2. Review [`backend/.env.example`](backend/.env.example) and update your local [`backend/.env`](backend/.env) if you want to use MongoDB Atlas or Stripe.
 
-| Payment Gateway | Admin Panel |
-|-----------------|------------|
-| ![](Payment.png) | ![](Admin%20panel.png) |
+3. Start the backend in one terminal:
 
-| Purchase History | Add Property |
-|------------------|-------------|
-| ![](Purchase%20History.png) | ![](Add%20Property.png) |
+```bash
+npm run dev:backend
+```
 
----
+4. Start the frontend in a second terminal:
 
-## ✨ Features
+```bash
+npm run dev:frontend
+```
 
-### 👤 For Users
-- User Registration & Login (Authentication)
-- Browse Properties in grid layout
-- View Property Details (price, location, rating, discount)
-- Rate Properties
-- Purchase Properties via Stripe
-- Download Invoice after payment
-- View Purchase History
+The frontend runs on `http://localhost:3000` and the backend defaults to `http://localhost:8080`.
 
-### 🔐 For Admin
-- Admin Dashboard
-- Add New Properties (with images)
-- Edit Existing Properties
-- Delete Properties (with confirmation)
-- View All Properties
-- View All Transactions
+If PowerShell blocks `npm` on your machine, use `npm.cmd` instead, for example `npm.cmd run install:all`.
 
----
+## Environment
 
-## 🛠️ Tech Stack
+Backend values:
 
-| Frontend | Backend | Database | Other |
-|---------|---------|----------|------|
-| React.js | Node.js | MongoDB | Stripe |
-| Tailwind CSS | Express.js | - | Multer |
+- `PORT`
+- `MONGO_URI`
+- `JWT_SECRET`
+- `CLIENT_URL`
+- `STRIPE_SECRET_KEY`
 
----
-1. Install backend dependencies
-cd server
-npm install
+Frontend values:
 
-2. Install frontend dependencies
-cd client
-npm install
+- `REACT_APP_API_URL`
 
-3. Environment Variables
+## Notes
 
-Create a .env file inside the server folder:
+- Checkout requires a valid Stripe secret key.
+- The backend expects a running MongoDB instance unless you point `MONGO_URI` at Atlas.
+- Project screenshots now live under `frontend/public/screenshots/`.
 
-MONGODB_URI=your_mongodb_connection_string
-STRIPE_SECRET_KEY=your_stripe_secret_key
-JWT_SECRET=your_jwt_secret
+## Screenshots
 
-👥 User Roles
-| Role      | Permissions                                              |
-| --------- | -------------------------------------------------------- |
-| **Admin** | Add, edit, delete properties, view all transactions      |
-| **User**  | Browse, rate, purchase properties, view purchase history |
-
-
-
-
-
-
+![Dashboard](frontend/public/screenshots/Dashboard.png)
+![Properties](frontend/public/screenshots/Properties%20Page.png)

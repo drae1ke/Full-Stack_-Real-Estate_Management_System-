@@ -1,20 +1,19 @@
 import React from "react";
 import "./GetStarted.css";
+import { BRAND_NAME } from "../../utils/siteContent";
+
 const GetStarted = () => {
   return (
     <div id="get-started" className="g-wrapper">
       <div className="paddings innerWidth g-container">
         <div className="flexColCenter inner-container">
-          <span className="primaryText">Get started with L’Espace</span>
+          <span className="primaryText">Get started with {BRAND_NAME}</span>
           <span className="secondaryText">
-          Join us to receive amazing price and Secure your dream residence quickly.
+            Join us to discover verified listings and secure the right Kenyan
+            property with more confidence.
             <br />
-            Find your perfect residence swiftly.
-
+            Find your next home, plot, or workspace faster.
           </span>
-          {/* <button className="button" href>
-            <a href="mailto:Najmul@gmail.com">Get Started</a>
-          </button> */}    
         </div>
       </div>
     </div>

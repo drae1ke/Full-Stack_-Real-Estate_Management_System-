@@ -1,21 +1,12 @@
 import React, { useContext, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SearchContext } from "../../context/SearchContext";
 import { searchProperty } from "../../api/propertyApi";
 
 const SearchBar = () => {
   const [search, setSearch] = useState("");
-  const location = useLocation();
   const navigate = useNavigate();
-  const {
-    searchResults,
-    search: searchText,
-    categoryFilter,
-    inStockFilter,
-    applySearch,
-    applySearchResults,
-    applyCategoryFilter,
-  } = useContext(SearchContext);
+  const { applySearch, applySearchResults } = useContext(SearchContext);
   async function handleClick(e) {
     e.preventDefault();
     const res = await searchProperty({
@@ -28,7 +19,7 @@ const SearchBar = () => {
   return (
     <div className="flexCenter search-bar">
       <input
-        placeholder="Search by title/city/country..."
+        placeholder="Search by estate, town or county..."
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}

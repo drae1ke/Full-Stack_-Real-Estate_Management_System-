@@ -1,0 +1,15 @@
+exports.DEFAULT_PROPERTY_CATEGORIES = [
+  "Apartment",
+  "Bedsitter",
+  "Studio",
+  "One Bedroom",
+  "Two Bedroom",
+  "Maisonette",
+  "Bungalow",
+  "Townhouse",
+  "Villa",
+  "Office Space",
+  "Retail Space",
+  "Warehouse",
+  "Land",
+];

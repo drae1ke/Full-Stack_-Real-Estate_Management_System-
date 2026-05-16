@@ -6,11 +6,9 @@ import { addCategory } from "../api/categoryApi";
 const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
   padding: 20px;
   border: 2px solid #4caf50; // New color
   border-radius: 10px;
@@ -42,44 +40,48 @@ const SubmitButton = styled.button`
   }
 `;
 
-const ToggleButton = styled.button`
-  background-color: transparent;
-  color: #4caf50; // New color
-  border: 2px solid #4caf50; // New color
-  border-radius: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: #45a049; // New color
-    color: white;
-  }
-`;
-
 const AddContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+`;
+
+const Title = styled.h3`
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #173f2d;
+`;
+
+const HelperText = styled.p`
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #5f6c7b;
+  line-height: 1.5;
 `;
 
 function AddCategory({ setIsCatAdd }) {
-  const [isAdding, setIsAdding] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submitted value:", inputValue);
+    const categoryName = inputValue.trim();
+
+    if (!categoryName) {
+      alert("Enter a category name first.");
+      return;
+    }
 
     try {
-      const categoryData = await addCategory({ category: inputValue });
+      const categoryData = await addCategory({ category: categoryName });
       console.log("Category added successfully:", categoryData);
-      setInputValue(""); // Clear the input after submission
+
+      if (!categoryData?._id) {
+        return;
+      }
+
+      setInputValue("");
       setIsCatAdd((catAdd) => !catAdd);
     } catch (error) {
       console.error("Error adding category:", error);
@@ -88,26 +90,24 @@ function AddCategory({ setIsCatAdd }) {
 
   return (
     <AddContainer>
-      {isAdding ? (
-        <FormWrapper onSubmit={handleSubmit}>
-          <label htmlFor="category">
-            <h2>Add Category</h2>
-          </label>
-          <InputField
-            type="text"
-            id="category"
-            name="category"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Enter category name..."
-          />
-          <SubmitButton type="submit">Add</SubmitButton>
-        </FormWrapper>
-      ) : (
-        <ToggleButton onClick={() => setIsAdding(true)}>
-          Add New Category
-        </ToggleButton>
-      )}
+      <FormWrapper onSubmit={handleSubmit}>
+        <label htmlFor="category">
+          <Title>Add a property category</Title>
+        </label>
+        <HelperText>
+          Keep the listing form in sync by adding categories such as
+          maisonettes, land, or office space here.
+        </HelperText>
+        <InputField
+          type="text"
+          id="category"
+          name="category"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Enter category name..."
+        />
+        <SubmitButton type="submit">Save Category</SubmitButton>
+      </FormWrapper>
     </AddContainer>
   );
 }

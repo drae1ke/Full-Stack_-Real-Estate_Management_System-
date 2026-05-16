@@ -1,7 +1,9 @@
+import { apiUrl } from "./client";
+
 export async function getAllOrders() {
   const token = JSON.parse(localStorage.getItem("user")).token;
   try {
-    const response = await fetch("http://localhost:8080/orders", {
+    const response = await fetch(apiUrl("/orders"), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -19,7 +21,7 @@ export async function updateOneOrder(id) {
   console.log(id);
   const token = JSON.parse(localStorage.getItem("user")).token;
   try {
-    const response = await fetch(`http://localhost:8080/orders/${id}`, {
+    const response = await fetch(apiUrl(`/orders/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

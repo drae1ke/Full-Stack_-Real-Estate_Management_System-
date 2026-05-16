@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { apiUrl } from "../api/client";
 
 const FormContainer = styled.div`
   display: flex;
@@ -58,11 +59,6 @@ const StyledButton = styled.button`
     background-color: #006400; // DarkGreen
   }
 `;
-const StyledError = styled.span`
-  color: red;
-  font-size: 0.8rem;
-`;
-
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +67,7 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8080/auth/login", {
+    const response = await fetch(apiUrl("/auth/login"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

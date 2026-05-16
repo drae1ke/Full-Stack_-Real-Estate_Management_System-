@@ -31,7 +31,6 @@ const Text = styled.div`
 
 function Visit({ uid, pid, uname, pname }) {
   const [visitDate, setVisitDate] = useState("");
-  const [visitList, setVisitList] = useState();
   const [show, setShow] = useState(false);
   const [isVisitSelect, setIsVisitSelect] = useState();
   const [render, setRender] = useState();
@@ -43,7 +42,6 @@ function Visit({ uid, pid, uname, pname }) {
       setList(visit);
       let matchingObject = visit?.find((obj) => obj.userId === uid);
       setIsVisitSelect(matchingObject);
-      setVisitList(visit);
     };
     fetchData();
   }, [pid, uid, render]);

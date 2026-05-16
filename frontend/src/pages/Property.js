@@ -1,12 +1,10 @@
 import styled from "styled-components";
 
-import { useContext, useEffect, useState } from "react";
-import { getCategories } from "../api/categoryApi";
+import { useContext, useState } from "react";
 //import ProductComponent from "../Components/ProductComponent";
 import ProductWithPagination from "../Components/Pagination";
 import { SearchContext } from "../context/SearchContext";
-import { searchByStock, searchProperty } from "../api/propertyApi";
-import UserContext from "../context/UserContext";
+import { searchProperty } from "../api/propertyApi";
 import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
@@ -55,7 +53,7 @@ const SearchContainer = styled.div`
 `;
 const SearchBox = styled.input.attrs({
   type: "search",
-  placeholder: "Search by City or Area Name...",
+  placeholder: "Search by estate, town or county...",
 })`
   width: 450px;
   height: 50px;
@@ -71,21 +69,10 @@ function Products() {
   const [search, setSearch] = useState("");
   const location = useLocation();
   const {
-    searchResults,
-    search: searchText,
-    categoryFilter,
-    inStockFilter,
     applySearch,
     applySearchResults,
-    applyCategoryFilter,
   } = useContext(SearchContext);
   const showSearchBox = location.pathname === "/property";
-  useEffect(() => {}, [
-    searchResults,
-    searchText,
-    categoryFilter,
-    inStockFilter,
-  ]);
 
   async function handleClick(e) {
     e.preventDefault();

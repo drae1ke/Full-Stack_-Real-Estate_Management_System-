@@ -1,16 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import {
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+} from "react-icons/fa";
+import {
+  BRAND_NAME,
+  CONTACT_DETAILS,
+  SITE_REGION,
+} from "../utils/siteContent";
 
-// Define styled components for the title, paragraphs, and container
 const ContactFormContainer = styled.div`
-  background-color: #E6E6FA;
+  background-color: #e6e6fa;
   padding: 40px;
   border-radius: 10px;
   max-width: 1200px;
   margin: 50px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 `;
 
 const Title = styled.h2`
@@ -66,47 +77,65 @@ const SocialLink = styled.a`
   color: #007bff;
   font-size: 1.5em;
   text-decoration: none;
+
   &:hover {
     color: #0056b3;
   }
 `;
 
-// Enhanced Contactus component with styled components
 function Contactus() {
   return (
     <ContactFormContainer>
       <Title>Contact Us</Title>
       <ContactDetails>
         <ContactItem>
-          <Icon><FaEnvelope /></Icon>
-          <Paragraph>Email: L’Espace@gmail.com</Paragraph>
+          <Icon>
+            <FaEnvelope />
+          </Icon>
+          <Paragraph>Email: {CONTACT_DETAILS.email}</Paragraph>
         </ContactItem>
         <ContactItem>
-          <Icon><FaPhone /></Icon>
-          <Paragraph>Phone Number: 0190001010</Paragraph>
+          <Icon>
+            <FaPhone />
+          </Icon>
+          <Paragraph>Phone Number: {CONTACT_DETAILS.phone}</Paragraph>
         </ContactItem>
         <ContactItem>
-          <Icon><FaMapMarkerAlt /></Icon>
-          <Paragraph>Dhaka Uttara</Paragraph>
+          <Icon>
+            <FaMapMarkerAlt />
+          </Icon>
+          <Paragraph>{CONTACT_DETAILS.address}</Paragraph>
         </ContactItem>
       </ContactDetails>
-      <Paragraph>You can call us Saturday to Thursday, 9AM to 5PM.</Paragraph>
+      <Paragraph>You can call us {CONTACT_DETAILS.supportHours}.</Paragraph>
       <Paragraph>Feel free to give us a call. We'd love to hear from you!</Paragraph>
 
       <SectionTitle>How We Started</SectionTitle>
       <Paragraph>
-        L’Espace is a Bangladeshi company with a vision to revolutionize the real estate market. Our journey began with a small team of dedicated professionals who shared a common goal: to make property management more accessible and efficient for everyone.
+        {BRAND_NAME} is a Kenyan real estate platform built to make property
+        discovery and management easier for buyers, renters, and property
+        owners. We started with a simple goal: create a clearer way to search,
+        compare, and manage listings across the country.
       </Paragraph>
 
       <SectionTitle>Our Vision</SectionTitle>
       <Paragraph>
-        At L’Espace, we aim to become the leading real estate management platform in Bangladesh. Our vision is to provide seamless, transparent, and reliable services that cater to all aspects of property management. We strive to empower property owners and tenants with the tools they need to make informed decisions.
+        At {BRAND_NAME}, we want to become one of the most trusted real estate
+        management platforms in {SITE_REGION}. Our focus is on transparent
+        listings, practical admin tools, and reliable experiences that help
+        people make better property decisions.
       </Paragraph>
 
       <SocialLinks>
-        <SocialLink href="https://facebook.com/" target="_blank"><FaFacebook /></SocialLink>
-        <SocialLink href="https://twitter.com" target="_blank"><FaTwitter /></SocialLink>
-        <SocialLink href="https://linkedin.com" target="_blank"><FaLinkedin /></SocialLink>
+        <SocialLink href="https://facebook.com/" target="_blank" rel="noreferrer">
+          <FaFacebook />
+        </SocialLink>
+        <SocialLink href="https://twitter.com" target="_blank" rel="noreferrer">
+          <FaTwitter />
+        </SocialLink>
+        <SocialLink href="https://linkedin.com" target="_blank" rel="noreferrer">
+          <FaLinkedin />
+        </SocialLink>
       </SocialLinks>
     </ContactFormContainer>
   );

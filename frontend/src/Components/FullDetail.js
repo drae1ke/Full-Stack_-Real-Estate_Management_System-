@@ -14,7 +14,7 @@ const Col1 = styled.div`
 `;
 
 function ProductDetailsWhole() {
-  const { product } = useContext(SingleProductContext);
+  useContext(SingleProductContext);
   return (
     <ProductContainer>
       <Col1>

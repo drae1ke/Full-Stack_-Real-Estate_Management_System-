@@ -13,13 +13,11 @@ const Container = styled.div`
 `;
 
 function UserOrder() {
-  const [user, setUser] = useState({});
   const [order, setOrder] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchUsers();
-        setUser(response?.user);
         setOrder(response?.orders);
       } catch (error) {
         console.error("Error", error);

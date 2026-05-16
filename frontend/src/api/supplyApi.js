@@ -1,6 +1,8 @@
+import { apiUrl } from "./client";
+
 export async function addSupply(supply) {
   try {
-    const response = await fetch("http://localhost:8080/supply", {
+    const response = await fetch(apiUrl("/supply"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +23,7 @@ export async function addSupply(supply) {
 }
 
 export async function getSupplies() {
-  const response = await fetch("http://localhost:8080/supply");
+  const response = await fetch(apiUrl("/supply"));
   const data = await response.json();
   return data;
 }
@@ -29,7 +31,7 @@ export async function getSupplies() {
 export async function updateSupply(sup) {
   console.log(sup);
   try {
-    const response = await fetch("http://localhost:8080/supply/update", {
+    const response = await fetch(apiUrl("/supply/update"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json", // Make sure to set the content type

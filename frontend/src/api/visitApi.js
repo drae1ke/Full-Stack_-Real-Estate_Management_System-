@@ -1,5 +1,7 @@
+import { apiUrl } from "./client";
+
 export async function getVisits() {
-  const response = await fetch("http://localhost:8080/visit");
+  const response = await fetch(apiUrl("/visit"));
   const data = await response.json();
   return data;
 }
@@ -7,7 +9,7 @@ export async function getVisits() {
 export async function addVisit(visit) {
   console.log(visit);
   try {
-    const response = await fetch("http://localhost:8080/visit", {
+    const response = await fetch(apiUrl("/visit"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +32,7 @@ export async function addVisit(visit) {
 
 export async function getOnePropetyVisitDate(visit) {
   try {
-    const response = await fetch("http://localhost:8080/visit/get", {
+    const response = await fetch(apiUrl("/visit/get"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +54,7 @@ export async function getOnePropetyVisitDate(visit) {
 }
 
 export async function updateVisit(id) {
-  const response = await fetch(`http://localhost:8080/visit/${id}`, {
+  const response = await fetch(apiUrl(`/visit/${id}`), {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +72,7 @@ export async function updateVisit(id) {
 }
 
 export async function deleteVisit(id) {
-  const res = await fetch(`http://localhost:8080/visit/${id}`, {
+  const res = await fetch(apiUrl(`/visit/${id}`), {
     method: "DELETE",
   });
   if (!res.ok) {

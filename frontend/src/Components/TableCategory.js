@@ -97,6 +97,11 @@ const TableAndEditWrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
 `;
+
+const EmptyState = styled.p`
+  color: #5f6c7b;
+  margin-top: 1rem;
+`;
 function TableCategory({ isCatAdd, setIsCatAdd }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -191,6 +196,9 @@ function TableCategory({ isCatAdd, setIsCatAdd }) {
           ))}
         </tbody>
       </TableContainer>
+      {!loading && categories.length === 0 && (
+        <EmptyState>No categories found yet.</EmptyState>
+      )}
       {editingCategory && (
         <EditSection>
           <EditTitle>Edit Category</EditTitle>

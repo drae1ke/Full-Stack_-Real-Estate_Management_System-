@@ -1,17 +1,19 @@
+import { apiUrl } from "./client";
+
 export async function getCategories() {
-  const response = await fetch("http://localhost:8080/category");
+  const response = await fetch(apiUrl("/category"));
   const data = await response.json();
   return data;
 }
 
 export async function getCategoryById(id) {
-  const response = await fetch(`http://localhost:8080/category/${id}`);
+  const response = await fetch(apiUrl(`/category/${id}`));
   const data = await response.json();
   return data;
 }
 
 export async function deleteCategory(id) {
-  const res = await fetch(`http://localhost:8080/category/${id}`, {
+  const res = await fetch(apiUrl(`/category/${id}`), {
     method: "DELETE",
   });
   if (!res.ok) {
@@ -25,7 +27,7 @@ export async function deleteCategory(id) {
 export async function addCategory(category) {
   console.log(category);
   try {
-    const response = await fetch("http://localhost:8080/category", {
+    const response = await fetch(apiUrl("/category"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json", // Make sure to set the content type
@@ -48,7 +50,7 @@ export async function addCategory(category) {
 
 // api.js
 export async function updateCategory(id, updatedName) {
-  const response = await fetch(`http://localhost:8080/category/${id}`, {
+  const response = await fetch(apiUrl(`/category/${id}`), {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

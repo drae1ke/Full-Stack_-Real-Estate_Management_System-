@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { imageUrl } from "../api/client";
 
 const Container = styled.div`
   display: flex;
@@ -130,7 +131,7 @@ function ProductEl({ el, index }) {
       <PicDiv>
         {" "}
         <ProductImage
-          src={`http://localhost:8080/images/${el?.image}`}
+          src={imageUrl(el?.image)}
           alt="Product"
         />
       </PicDiv>

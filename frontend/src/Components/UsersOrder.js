@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
+import { formatKenyanDateTime } from "../utils/formatters";
 
-// Styled Components
 const TableContainer = styled.div`
-  width: 80%; /* Set the table width to 80% of the viewport width */
-  margin: 0 auto; /* Center the table horizontally */
-  overflow-x: auto; /* Makes the table scrollable horizontally on small screens */
+  width: 80%;
+  margin: 0 auto;
+  overflow-x: auto;
 `;
 
 const StyledTable = styled.table`
@@ -32,7 +32,6 @@ const TableCell = styled.td`
   border: 1px solid #ddd;
 `;
 
-// UsersOrder Component
 function UsersOrder({ order }) {
   return (
     <TableContainer>
@@ -48,11 +47,11 @@ function UsersOrder({ order }) {
           {order
             ?.slice()
             .reverse()
-            .map((el, index) => (
-              <TableRow key={el?._id}>
-                <TableCell>{Name(el?.property)}</TableCell>
-                <TableCell>{el?.address}</TableCell>
-                <TableCell>{Date(el?.date)}</TableCell>
+            .map((item) => (
+              <TableRow key={item?._id}>
+                <TableCell>{propertyNames(item?.property)}</TableCell>
+                <TableCell>{item?.address}</TableCell>
+                <TableCell>{formatKenyanDateTime(item?.date)}</TableCell>
               </TableRow>
             ))}
         </tbody>
@@ -61,52 +60,8 @@ function UsersOrder({ order }) {
   );
 }
 
-// Name Function
-function Name(property) {
-  console.log(property);
-  const medArr = property?.map((el) => {
-    return `${el?.name}`;
-  });
-
-  const name = medArr.join(", ");
-  return <div>{name}</div>;
-}
-
-// Date Function
-function Date(dateString) {
-  const [ampm, setAmpm] = useState("am");
-  const [hours, setHour] = useState("");
-  const [date, setDate] = useState("");
-  const [min, setMin] = useState("");
-
-  useEffect(() => {
-    const indexOfT = dateString.indexOf("T");
-    const result = dateString.substring(0, indexOfT); // Date
-    setDate(result);
-    const time = dateString.substring(indexOfT + 1);
-    const indexOfDot = time.indexOf(".");
-    const result2 = time.substring(0, indexOfDot); // The whole hour, min and sec
-    const lastHourIndex = result2.indexOf(":");
-    const result3 = result2.substring(0, lastHourIndex); // Hour in String
-    const result4 = result2.substring(lastHourIndex + 1);
-    setMin(result4);
-    let hour = Number(result3);
-    // Adjust for Bangladesh time (UTC+6)
-    hour += 6;
-    if (hour >= 24) {
-      hour -= 24; // Adjust for overflow
-    }
-    if (hour >= 12) {
-      setAmpm("pm");
-      setHour(String(hour % 12 || 12)); // Correctly handle 12 PM
-    } else {
-      setHour(String(hour));
-    }
-  }, [dateString]);
-  const orderDate = `${date} `;
-  const orderTime = `${hours}:${min} ${ampm}`;
-
-  return `${orderDate}, ${orderTime}`;
+function propertyNames(property = []) {
+  return property.map((item) => item?.name).join(", ");
 }
 
 export default UsersOrder;

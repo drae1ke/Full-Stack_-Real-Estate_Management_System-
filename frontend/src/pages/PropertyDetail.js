@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import SingleProductContext from "../context/SingleProductContext";
 import { ProductContext } from "../context/ProductContext";
 import { getById } from "../api/propertyApi";
+import { imageUrl } from "../api/client";
 
 const PageContainer = styled.div`
   display: flex;
@@ -58,7 +59,7 @@ function ProductDetail() {
     <SingleProductContext.Provider value={value}>
       <PageContainer>
         <Picture
-          src={`http://localhost:8080/images/${product?.image}`}
+          src={imageUrl(product?.image)}
           alt={product?.name}
         />
         <ProductDetailComponent>

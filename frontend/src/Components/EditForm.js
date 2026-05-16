@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { getCategories } from "../api/categoryApi";
 import { updateProperty } from "../api/propertyApi";
-import SingleProductContext from "../context/SingleProductContext";
 import { useNavigate } from "react-router-dom";
+import { getCategoryOptions } from "../utils/formatters";
 
 const Wrapper = styled.div`
   display: flex;
@@ -66,6 +66,13 @@ const StyledError = styled.span`
   font-size: 0.8rem;
 `;
 
+const HelperText = styled.p`
+  margin: 0;
+  color: #5f6c7b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+`;
+
 // Adjusted InputRow and InputField for equal size and gap
 const InputRow = styled.div`
   display: flex;
@@ -78,7 +85,7 @@ const InputField = styled.div`
   flex: 1 1 calc(50% - 1rem); // Adjusted to ensure each input field takes up half the row minus the gap
 `;
 
-const EditForm = ({ product, reren, setReren }) => {
+const EditForm = ({ product, setReren }) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     name: product.name || "",
@@ -96,9 +103,10 @@ const EditForm = ({ product, reren, setReren }) => {
     const fetchData = async () => {
       try {
         const data = await getCategories();
-        setCategories(data);
+        setCategories(getCategoryOptions(data));
       } catch (error) {
         console.error("Failed to fetch categories:", error);
+        setCategories(getCategoryOptions());
       }
     };
 
@@ -133,7 +141,11 @@ const EditForm = ({ product, reren, setReren }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    validate();
+
+    if (!validate()) {
+      return;
+    }
+
     const formData = new FormData();
     // Check if an image file has been selected
     if (image) {
@@ -146,28 +158,29 @@ const EditForm = ({ product, reren, setReren }) => {
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
     });
-    if (
-      values.name &&
-      values.description &&
-      values.price &&
-      values.address &&
-      values.category
-    ) {
-      await updateProperty(formData, product._id);
-    } else {
-      alert("Property cannot be added");
+    const response = await updateProperty(formData, product._id);
+
+    if (!response?._id) {
+      alert("Property could not be updated");
+      return;
     }
+
+    alert("Property updated successfully");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
     setImage(null);
     setReren((reren) => !reren);
-    navigate("/");
+    navigate("/addProduct");
   };
 
   return (
     <Wrapper>
       <StyledForm onSubmit={handleSubmit}>
+        <HelperText>
+          Update the property details below. Changes will reflect across the
+          Kenyan listings catalogue once saved.
+        </HelperText>
         <InputRow>
           <InputField>
             <StyledLabel htmlFor="name">Name</StyledLabel>
@@ -254,7 +267,7 @@ const EditForm = ({ product, reren, setReren }) => {
           </InputField>
           <InputField>
             {" "}
-            <StyledLabel htmlFor="image">Image URL</StyledLabel>
+            <StyledLabel htmlFor="image">Listing Image</StyledLabel>
             <StyledInput
               id="image"
               name="image"

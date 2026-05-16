@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { imageUrl } from "../api/client";
 
 const Container = styled.div`
   display: flex;
@@ -67,7 +68,7 @@ function UserInfo({ user }) {
         <Number>Mobile Number: {user?.mobileNumber}</Number>
       </InfoContainer>
       <PicContainer>
-        <Image src={`http://localhost:8080/images/${user?.image}`} alt="User" />
+        <Image src={imageUrl(user?.image)} alt="User" />
       </PicContainer>
     </Container>
   );

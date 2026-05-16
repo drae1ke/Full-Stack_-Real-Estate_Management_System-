@@ -1,8 +1,9 @@
-import { useContext } from "react";
-
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import EditForm from "./EditForm";
 import { ProductContext } from "../context/ProductContext";
+import { useParams } from "react-router-dom";
+import { getById } from "../api/propertyApi";
 
 const EditContainer = styled.div`
   position: relative;
@@ -14,19 +15,6 @@ const EditContainer = styled.div`
   align-items: center;
 `;
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.1rem;
-  right: 0.1rem;
-  border-radius: 100px;
-  border: 1px solid gray;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  &:hover {
-    background-color: red;
-    color: white; /* Darker Blue on Hover */
-  }
-`;
-
 const WrapEditForm = styled.div`
   margin-top: 2rem;
   width: 100%; /* Ensure it takes full width */
@@ -36,11 +24,39 @@ const WrapEditForm = styled.div`
 
 function EditComp() {
   const { product, reren, setReren } = useContext(ProductContext);
+  const { id } = useParams();
+  const [selectedProduct, setSelectedProduct] = useState(product);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) {
+        setSelectedProduct(product);
+        return;
+      }
+
+      try {
+        const data = await getById(id);
+        setSelectedProduct(data);
+      } catch (error) {
+        console.error("Failed to fetch property for editing:", error);
+      }
+    };
+
+    fetchProperty();
+  }, [id, product]);
+
+  if (!selectedProduct) {
+    return null;
+  }
 
   return (
     <EditContainer>
       <WrapEditForm>
-        <EditForm product={product} reren={reren} setReren={setReren} />
+        <EditForm
+          product={selectedProduct}
+          reren={reren}
+          setReren={setReren}
+        />
       </WrapEditForm>
     </EditContainer>
   );

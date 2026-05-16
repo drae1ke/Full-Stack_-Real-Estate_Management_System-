@@ -1,27 +1,27 @@
 const model = require("../model/user");
-const User = model.User;
 const jwt = require("jsonwebtoken");
+
+const User = model.User;
+const JWT_SECRET = process.env.JWT_SECRET || "change_me_in_local_dev";
 
 exports.createUser = async (req, res) => {
   try {
     if (!req.file) {
-      res.json({
+      return res.status(400).json({
         success: false,
-        message: "No Picture was provided",
+        message: "No picture was provided",
       });
-    } else {
-      const user = new User(req.body);
-      var token = jwt.sign({ email: req.body.email }, "shhhhh");
-      user.token = token;
-      if (!user.role) {
-        user.role = "user";
-      }
-
-      user.image = req.file.filename;
-      const output = await user.save();
-      console.log(output);
-      res.status(201).json(output);
     }
+
+    const user = new User(req.body);
+    const token = jwt.sign({ email: req.body.email }, JWT_SECRET);
+
+    user.token = token;
+    user.role = user.role || "user";
+    user.image = req.file.filename;
+
+    const output = await user.save();
+    res.status(201).json(output);
   } catch (error) {
     console.error(error);
     res.status(400).send(error);
@@ -29,32 +29,26 @@ exports.createUser = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  console.log(req.body);
   try {
     const user = await User.findOne({ email: req.body.email });
-    if (user?.password === req.body.password) {
-      var token = jwt.sign({ email: req.body.email }, "shhhhh");
-      user.token = token;
-      try {
-        user.save();
-        res.json({
-          token: token,
-          name: user.name,
-          role: user.role,
-          id: user._id,
-          image: user.image,
-          //mobileNumber: user.mobileNumber,
-        });
-      } catch (err) {
-        console.log("Error");
-        res.json(err);
-      }
-    } else {
-      res.json({ error: "error" });
+
+    if (!user || user.password !== req.body.password) {
+      return res.status(401).json({ error: "Invalid email or password" });
     }
+
+    const token = jwt.sign({ email: req.body.email }, JWT_SECRET);
+    user.token = token;
+    await user.save();
+
+    res.json({
+      token,
+      name: user.name,
+      role: user.role,
+      id: user._id,
+      image: user.image,
+    });
   } catch (error) {
     console.error(error);
-    console.log("Final error");
     res.sendStatus(401);
   }
 };

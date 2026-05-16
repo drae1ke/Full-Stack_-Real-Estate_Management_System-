@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { imageUrl } from "../api/client";
 
 function Success() {
   const [date, setDate] = useState();
@@ -98,7 +99,7 @@ function Success() {
               }}
             >
               <img
-                src={`http://localhost:8080/images/${pay?.order?.image}`}
+                src={imageUrl(pay?.order?.image)}
                 alt={property.name}
                 style={{ width: "100%", height: "auto", marginBottom: "10px" }}
               />

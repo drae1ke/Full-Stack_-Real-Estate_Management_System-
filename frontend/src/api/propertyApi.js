@@ -1,6 +1,8 @@
+import { apiUrl } from "./client";
+
 export async function getProperty() {
   try {
-    const response = await fetch("http://localhost:8080/property");
+    const response = await fetch(apiUrl("/property"));
     const data = await response.json();
     return data;
   } catch (err) {
@@ -9,7 +11,7 @@ export async function getProperty() {
 }
 
 export async function getById(id) {
-  const response = await fetch(`http://localhost:8080/property/${id}`);
+  const response = await fetch(apiUrl(`/property/${id}`));
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -18,7 +20,7 @@ export async function getById(id) {
 }
 
 export async function deleteProperty(id) {
-  const res = await fetch(`http://localhost:8080/property/${id}`, {
+  const res = await fetch(apiUrl(`/property/${id}`), {
     method: "DELETE",
   });
   if (!res.ok) {
@@ -31,7 +33,7 @@ export async function deleteProperty(id) {
 
 export async function addProperty(formData) {
   try {
-    const response = await fetch("http://localhost:8080/property", {
+    const response = await fetch(apiUrl("/property"), {
       method: "POST",
       body: formData, // Send FormData directly
     });
@@ -53,7 +55,7 @@ export async function addProperty(formData) {
 export async function updateProperty(formData, id) {
   console.log("Updating Property", formData);
   try {
-    const response = await fetch(`http://localhost:8080/property/${id}`, {
+    const response = await fetch(apiUrl(`/property/${id}`), {
       method: "PATCH",
       body: formData,
     });
@@ -72,7 +74,7 @@ export async function updateProperty(formData, id) {
 export async function updateStar(formData, id) {
   console.log("Updating Property", formData);
   try {
-    const response = await fetch(`http://localhost:8080/property/star/${id}`, {
+    const response = await fetch(apiUrl(`/property/star/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +95,7 @@ export async function updateStar(formData, id) {
 
 export async function searchProperty(searchData) {
   try {
-    const response = await fetch("http://localhost:8080/search", {
+    const response = await fetch(apiUrl("/search"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +117,7 @@ export async function searchProperty(searchData) {
 
 export async function searchByCategory(searchData) {
   try {
-    const response = await fetch("http://localhost:8080/search/cat", {
+    const response = await fetch(apiUrl("/search/cat"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +138,7 @@ export async function searchByCategory(searchData) {
 }
 export async function searchByStock(searchData) {
   try {
-    const response = await fetch("http://localhost:8080/search/sto", {
+    const response = await fetch(apiUrl("/search/sto"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,12 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { getCategories } from "../api/categoryApi";
 import { addProperty } from "../api/propertyApi";
-
-// Define styled components for form elements
-const FormContainer = styled.div`
-  justify-content: center;
-  text-align: center;
-`;
+import { getCategoryOptions } from "../utils/formatters";
 
 const StyledForm = styled.form`
   display: flex;
@@ -62,6 +57,13 @@ const StyledError = styled.span`
   font-size: 0.8rem;
 `;
 
+const HelperText = styled.p`
+  margin: 0;
+  color: #5f6c7b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+`;
+
 // Adjusted InputRow and InputField for equal size and gap
 const InputRow = styled.div`
   display: flex;
@@ -74,7 +76,7 @@ const InputField = styled.div`
   flex: 1 1 calc(50% - 1rem); // Adjusted to ensure each input field takes up half the row minus the gap
 `;
 
-const AddProductForm = ({ isCatAdd }) => {
+const AddProductForm = ({ isCatAdd, onPropertyAdded }) => {
   const [values, setValues] = useState({
     name: "",
     description: "",
@@ -92,9 +94,10 @@ const AddProductForm = ({ isCatAdd }) => {
     const fetchData = async () => {
       try {
         const data = await getCategories();
-        setCategories(data);
+        setCategories(getCategoryOptions(data));
       } catch (error) {
         console.error("Failed to fetch categories:", error);
+        setCategories(getCategoryOptions());
       }
     };
 
@@ -130,27 +133,26 @@ const AddProductForm = ({ isCatAdd }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    validate();
+
+    if (!validate()) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append("image", image);
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
     });
-    if (
-      values.name &&
-      values.description &&
-      values.price &&
-      values.address &&
-      values.category &&
-      image
-    ) {
-      const response = await addProperty(formData);
-      if (response?.success === true) {
-        alert("Property Added Successfully");
-      }
-    } else {
+
+    const response = await addProperty(formData);
+
+    if (response?.success !== true) {
       alert("Property cannot be added");
+      return;
     }
+
+    alert("Property added successfully");
+    onPropertyAdded?.();
 
     setValues({
       name: "",
@@ -168,6 +170,11 @@ const AddProductForm = ({ isCatAdd }) => {
 
   return (
     <StyledForm onSubmit={handleSubmit}>
+      <HelperText>
+        Add homes, land, or commercial spaces for the Kenyan market. If the
+        right category is missing, you can create one in the category section
+        below.
+      </HelperText>
       <InputRow>
         <InputField>
           <StyledLabel htmlFor="name">Name</StyledLabel>
@@ -255,7 +262,7 @@ const AddProductForm = ({ isCatAdd }) => {
         </InputField>
 
         <InputField>
-          <StyledLabel htmlFor="image">Image URL</StyledLabel>
+          <StyledLabel htmlFor="image">Listing Image</StyledLabel>
           <StyledInput
             id="image"
             name="image"

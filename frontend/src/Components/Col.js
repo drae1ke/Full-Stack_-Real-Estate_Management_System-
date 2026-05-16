@@ -7,10 +7,11 @@ import UserContext from "../context/UserContext";
 
 import Ratings from "./Ratings";
 import TotalRating from "./TotalRating";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PriceComp from "./PriceComp";
 import { deleteProperty } from "../api/propertyApi";
 import Visit from "./Visit";
+import { apiUrl } from "../api/client";
 
 const Container = styled.div`
   display: flex;
@@ -76,15 +77,14 @@ function ProductCol1() {
   const isAdmin = user?.role === "admin";
   const isUser = user?.role === "user";
   function handleClick() {
-
-    navigate("/edit");
+    navigate(`/edit/${product?._id}`);
   }
 
   const orders = async () => {
     const address = product?.address;
     const image = product?.image;
     try {
-      const res = await fetch("http://localhost:8080/orders", {
+      const res = await fetch(apiUrl("/orders"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ function ProductCol1() {
   const updateUser = async () => {
     console.log("Requesting");
     try {
-      const res = await fetch("http://localhost:8080/payment/user", {
+      const res = await fetch(apiUrl("/payment/user"), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -127,8 +127,7 @@ function ProductCol1() {
           userToken: usertoken,
         }),
       });
-      const data = await res.json();
-      //console.log(data);
+      await res.json();
     } catch (error) {
       console.log(error);
     }
@@ -148,7 +147,7 @@ function ProductCol1() {
       navigate("/login");
     } else {
       try {
-        const response = await fetch("http://localhost:8080/payment", {
+        const response = await fetch(apiUrl("/payment"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

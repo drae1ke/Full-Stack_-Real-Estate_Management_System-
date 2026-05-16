@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Products from "./pages/Property";
-//import Cart from "./pages/Cart";
-import Order from "./pages/Order";
 import PageNotFound from "./pages/PageNotFound";
 import "./App.css";
 import ProductDetail from "./pages/PropertyDetail";
@@ -10,7 +8,6 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AddProduct from "./pages/AddProperty";
 import { CartProvider } from "./context/CartContext";
-import { useContext, useEffect, useState } from "react";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import UserOrder from "./pages/UserOrder";
@@ -21,24 +18,17 @@ import Website from "./pages/Website";
 import Contactus from "./pages/Contactus";
 import Visit from "./pages/Visit";
 
-function App() {
-  const [visitedCart, setVisitedCart] = useState(false);
-  const [user, setUser] = useState(null);
+function AdminRoute({ children }) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-      setUser({
-        name: "unknow",
-        _id: 0,
-        role: "visitor",
-      });
-    } else {
-      setUser(user);
-    }
-  }, []);
-  const isAdmin = user?.role === "admin";
-  console.log(isAdmin);
+  if (user?.role !== "admin") {
+    return <PageNotFound />;
+  }
+
+  return children;
+}
+
+function App() {
   return (
     <CartProvider>
       <Router>
@@ -48,20 +38,65 @@ function App() {
             <Route path="/property" element={<Products />} />
             <Route path="/:id" element={<ProductDetail />} />
             {<Route path="contact" element={<Contactus />} />}
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="addProduct" element={<AddProduct />} />
+            <Route
+              path="dashboard"
+              element={
+                <AdminRoute>
+                  <Dashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="addProduct"
+              element={
+                <AdminRoute>
+                  <AddProduct />
+                </AdminRoute>
+              }
+            />
             <Route path="success" element={<Success />} />
             <Route path="cancel" element={<Cancel />} />
             <Route path="userOrder" element={<UserOrder />} />
-            <Route path="category" element={<AddCategory />} />
-            <Route path="adminOrders" element={<AdminOrder />} />
-            <Route path="edit" element={<Edit />} />
-            {
-              <Route
-                path="visit"
-                element={isAdmin ? <Visit /> : <PageNotFound />}
-              />
-            }
+            <Route
+              path="category"
+              element={
+                <AdminRoute>
+                  <AddCategory />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="adminOrders"
+              element={
+                <AdminRoute>
+                  <AdminOrder />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="edit"
+              element={
+                <AdminRoute>
+                  <Edit />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="edit/:id"
+              element={
+                <AdminRoute>
+                  <Edit />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="visit"
+              element={
+                <AdminRoute>
+                  <Visit />
+                </AdminRoute>
+              }
+            />
           </Route>
           <Route path="*" element={<PageNotFound />} />
           <Route path="login" element={<Login />} />

@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import StarRating from "./StarRating";
 import styled from "styled-components";
 import SingleProductContext from "../context/SingleProductContext";
-import { updateProperty, updateStar } from "../api/propertyApi";
+import { updateStar } from "../api/propertyApi";
 import UserContext from "../context/UserContext";
 
 const Container = styled.div`

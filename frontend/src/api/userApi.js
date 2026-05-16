@@ -1,6 +1,8 @@
+import { apiUrl } from "./client";
+
 export async function addUser(formData) {
   try {
-    const response = await fetch("http://localhost:8080/auth/signup", {
+    const response = await fetch(apiUrl("/auth/signup"), {
       method: "POST",
       body: formData, // Send FormData directly
     });
@@ -24,7 +26,7 @@ export async function fetchUsers() {
     const user = JSON.parse(localStorage.getItem("user"));
     //const user = localStorage.getItem("user");
     const token = JSON.parse(localStorage.getItem("user")).token;
-    const response = await fetch("http://localhost:8080/users/getUser", {
+    const response = await fetch(apiUrl("/users/getUser"), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +52,7 @@ export async function getOneUser(id) {
   //console.log(id);
   const token = JSON.parse(localStorage.getItem("user")).token;
   try {
-    const response = await fetch(`http://localhost:8080/users/${id}`, {
+    const response = await fetch(apiUrl(`/users/${id}`), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
