@@ -1,66 +1,49 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { addUser } from "../api/userApi";
 
-const FormContainer = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff; // LightSkyBlue
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  margin: 0 auto;
+  gap: 1rem;
 `;
 
-const FormTitle = styled.div`
-  font-size: 45px;
-  font-weight: bold;
-  color: blue; // DarkGreen
-  margin-bottom: 20px;
-`;
-
-const StyledForm = styled.form`
+const Field = styled.label`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  gap: 0.45rem;
+  color: #35465a;
+  font-weight: 700;
 `;
 
-const StyledLabel = styled.label`
-  font-size: 25px;
-  font-weight: bold;
-  color: blue; // DarkGreen
-  margin-bottom: 5px;
+const Input = styled.input`
+  min-height: 3.15rem;
+  border-radius: 16px;
+  border: 1px solid rgba(19, 34, 57, 0.1);
+  padding: 0 0.9rem;
+  background: #f8fafc;
+  color: #142239;
 `;
 
-const StyledInput = styled.input`
-  padding: 10px;
-  height: 1em;
-  margin-bottom: 20px;
-  border: 1px solid blue; // DarkGreen
-  border-radius: 5px;
-`;
-
-const StyledButton = styled.button`
-  padding: 10px 20px;
-  background-color: blue; // Green
-  color: white;
-  font-size: 1.7rem;
-  font-weight: 950;
-  height: 4rem;
-  margin: 0 auto;
-  width: 13rem;
+const Button = styled.button`
+  min-height: 3.2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #132239, #27446a);
+  color: white;
+  font-weight: 800;
   cursor: pointer;
-  &:hover {
-    background-color: #006400; // DarkGreen
-  }
 `;
-const StyledError = styled.span`
-  color: red;
-  font-size: 0.8rem;
+
+const Helper = styled.p`
+  margin: 0;
+  color: #5b6c80;
+  line-height: 1.7;
+`;
+
+const ErrorText = styled.span`
+  color: #af2d2d;
+  font-size: 0.85rem;
 `;
 
 function SignUpFrom({ setSet }) {
@@ -73,51 +56,51 @@ function SignUpFrom({ setSet }) {
   const [errors, setErrors] = useState({});
   const fileInput = useRef(null);
 
-  function handleImageChange(e) {
-    setImage(e.target.files[0]);
-  }
-  function handleChange(e) {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValues((preVal) => ({ ...preVal, [name]: value }));
-  }
-  function validate() {
-    const tempErrors = {};
+  const validate = () => {
+    const nextErrors = {};
+
     if (!values.name) {
-      tempErrors.name = "Name is required";
+      nextErrors.name = "Name is required";
     }
+
     if (!values.email) {
-      tempErrors.email = "Email is required";
+      nextErrors.email = "Email is required";
     }
+
     if (!values.password) {
-      tempErrors.password = "Password is required";
+      nextErrors.password = "Password is required";
     }
 
-    if (!image) tempErrors.image = "Image is required";
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  }
+    if (!image) {
+      nextErrors.image = "Profile image is required";
+    }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    validate();
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append("image", image);
     Object.keys(values).forEach((key) => {
       formData.append(key, values[key]);
     });
-    if (values.name && values.email && values.password && image) {
-      const res = await addUser(formData);
-      console.log(res);
-      if (res) {
-        alert("Registration Successfull");
-        setSet((set) => !set);
-      } else {
-        alert("Email alread exsits");
-      }
-    } else {
-      alert("Fill the form correctly");
+
+    const response = await addUser(formData);
+
+    if (!response) {
+      alert("Registration could not be completed.");
+      return;
     }
+
+    alert("Registration successful");
+    setSet((current) => !current);
     setValues({
       name: "",
       email: "",
@@ -127,52 +110,72 @@ function SignUpFrom({ setSet }) {
       fileInput.current.value = "";
     }
     setImage(null);
-  }
+  };
 
   return (
-    <FormContainer>
-      <FormTitle>Sign Up</FormTitle>
-      <StyledForm onSubmit={handleSubmit}>
-        <StyledLabel htmlFor="name">Name</StyledLabel>
-        <StyledInput
-          id="name"
-          name="name"
+    <Form onSubmit={handleSubmit}>
+      <Helper>
+        Create a client account to submit bookings, track service requests, and
+        keep a clearer record of your property activity.
+      </Helper>
+
+      <Field>
+        Full Name
+        <Input
           type="text"
           value={values.name}
-          onChange={handleChange}
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              name: event.target.value,
+            }))
+          }
         />
-        {errors.name && <StyledError>{errors.name}</StyledError>}
-        <StyledLabel htmlFor="email">Email</StyledLabel>
-        <StyledInput
-          id="email"
-          name="email"
-          type="text"
+        {errors.name && <ErrorText>{errors.name}</ErrorText>}
+      </Field>
+
+      <Field>
+        Email
+        <Input
+          type="email"
           value={values.email}
-          onChange={handleChange}
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              email: event.target.value,
+            }))
+          }
         />
-        {errors.email && <StyledError>{errors.email}</StyledError>}
-        <StyledLabel htmlFor="password">Password</StyledLabel>
-        <StyledInput
-          id="password"
-          name="password"
+        {errors.email && <ErrorText>{errors.email}</ErrorText>}
+      </Field>
+
+      <Field>
+        Password
+        <Input
           type="password"
           value={values.password}
-          onChange={handleChange}
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              password: event.target.value,
+            }))
+          }
         />
-        {errors.password && <StyledError>{errors.password}</StyledError>}
+        {errors.password && <ErrorText>{errors.password}</ErrorText>}
+      </Field>
 
-        <StyledLabel htmlFor="image">Image URL</StyledLabel>
-        <StyledInput
-          id="image"
-          name="image"
+      <Field>
+        Profile Image
+        <Input
           type="file"
           ref={fileInput}
-          onChange={handleImageChange}
+          onChange={(event) => setImage(event.target.files?.[0] || null)}
         />
-        {errors.image && <StyledError>{errors.image}</StyledError>}
-        <StyledButton type="submit">Sign up</StyledButton>
-      </StyledForm>
-    </FormContainer>
+        {errors.image && <ErrorText>{errors.image}</ErrorText>}
+      </Field>
+
+      <Button type="submit">Create Account</Button>
+    </Form>
   );
 }
 

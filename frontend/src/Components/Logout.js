@@ -4,30 +4,24 @@ import { CartContext } from "../context/CartContext";
 import UserContext from "../context/UserContext";
 import styled from "styled-components";
 
-const NavLink2 = styled.a`
-  text-decoration: none;
-  color: #fff;
-  background-color: #007bff;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  height: 2rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-radius: 8px;
+const LogoutButton = styled.button`
+  min-height: 2.8rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: none;
+  color: white;
+  background: linear-gradient(135deg, #132239, #27446a);
   cursor: pointer;
-  font-size: 1.25rem; // Increase the font size
-  font-weight: 500;
-  transition: color 0.3s ease; // Make the text bolder
-  &:hover {
-    background-color: #0056b3;
-  }
+  font-size: 0.95rem;
+  font-weight: 800;
 
-  @media (max-width: 1470px) {
-    font-size: 1rem;
+  &:hover {
+    filter: brightness(1.05);
   }
 `;
+
 function Logout() {
-  const { cart, setCart, cartAmount, setCartAmount } = useContext(CartContext);
+  const { setCart, setCartAmount } = useContext(CartContext);
   const { resetUserContext } = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -41,7 +35,7 @@ function Logout() {
     localStorage.removeItem("order");
     navigate("/login");
   }
-  return <NavLink2 onClick={handleClick}>Logout</NavLink2>;
+  return <LogoutButton onClick={handleClick}>Logout</LogoutButton>;
 }
 
 export default Logout;

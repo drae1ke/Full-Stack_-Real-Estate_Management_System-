@@ -3,69 +3,52 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { apiUrl } from "../api/client";
 
-const FormContainer = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff; // LightSkyBlue
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  margin: 0 auto;
+  gap: 1rem;
 `;
 
-const FormTitle = styled.div`
-  font-size: 45px;
-  font-weight: bold;
-  color: blue; // DarkGreen
-  margin-bottom: 20px;
-`;
-
-const StyledForm = styled.form`
+const Field = styled.label`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  gap: 0.45rem;
+  color: #35465a;
+  font-weight: 700;
 `;
 
-const StyledLabel = styled.label`
-  font-size: 25px;
-  font-weight: bold;
-  color: blue; // DarkGreen
-  margin-bottom: 5px;
+const Input = styled.input`
+  min-height: 3.15rem;
+  border-radius: 16px;
+  border: 1px solid rgba(19, 34, 57, 0.1);
+  padding: 0 0.9rem;
+  background: #f8fafc;
+  color: #142239;
 `;
 
-const StyledInput = styled.input`
-  padding: 10px;
-  height: 2.5rem;
-  margin-bottom: 20px;
-  border: 1px solid blue; // DarkGreen
-  border-radius: 5px;
-`;
-
-const StyledButton = styled.button`
-  padding: 10px 20px;
-  background-color: blue; // Green
-  color: white;
-  font-size: 1.7rem;
-  font-weight: 950;
-  height: 4rem;
-  margin: 0 auto;
-  width: 13rem;
+const Button = styled.button`
+  min-height: 3.2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #132239, #27446a);
+  color: white;
+  font-weight: 800;
   cursor: pointer;
-  &:hover {
-    background-color: #006400; // DarkGreen
-  }
 `;
+
+const Helper = styled.p`
+  margin: 0;
+  color: #5b6c80;
+  line-height: 1.7;
+`;
+
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     const response = await fetch(apiUrl("/auth/login"), {
       method: "POST",
@@ -77,49 +60,44 @@ function LoginForm() {
 
     const data = await response.json();
 
-    if (response.status === 401) {
-      console.log(response.status);
-      alert("Wrong Password or Email");
+    if (response.status === 401 || !data.token) {
+      alert("Wrong password or email");
       return;
     }
-    if (data.token) {
-      localStorage.setItem("user", JSON.stringify(data));
-      if (data?.role === "admin") {
-        navigate("/dashboard");
-      } else {
-        navigate("/");
-      }
-    } else {
-      alert("Wrong password or email");
-    }
+
+    localStorage.setItem("user", JSON.stringify(data));
+    navigate(data?.role === "admin" ? "/dashboard" : "/");
   };
+
   return (
-    <FormContainer>
-      <FormTitle>Login</FormTitle>
-      <StyledForm onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
+      <Helper>
+        Sign in to access tenant records, booking approvals, dashboard
+        analytics, and your portfolio workflows.
+      </Helper>
 
-        <StyledLabel htmlFor="email">Email</StyledLabel>
-        <StyledInput
-          id="email"
-          name="email"
-          type="text"
+      <Field>
+        Email
+        <Input
+          type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(event) => setEmail(event.target.value)}
+          required
         />
+      </Field>
 
-          
-        <StyledLabel htmlFor="password">Password</StyledLabel>
-        <StyledInput
-          id="password"
-          name="password"
+      <Field>
+        Password
+        <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(event) => setPassword(event.target.value)}
+          required
         />
-        
-        <StyledButton type="submit">Login</StyledButton>
-      </StyledForm>
-    </FormContainer>
+      </Field>
+
+      <Button type="submit">Sign In</Button>
+    </Form>
   );
 }
 

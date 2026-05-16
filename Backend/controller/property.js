@@ -1,41 +1,36 @@
 const mongoose = require("mongoose");
 const model = require("../model/property");
+const { normalizePropertyPayload } = require("../utils/propertyPayload");
 
 const Property = model.Property;
 
 //Adding one Document
 exports.createProperty = async (req, res) => {
-  //console.log("Create req is:", req.body, req.file);
-  let response;
-  if (!req.body.discountPercentage) {
-    response = { ...req.body, discountPercentage: 0 };
-  } else {
-    response = req.body;
-  }
+  const response = normalizePropertyPayload(req.body);
   try {
     if (!req.file) {
-      res.json({
+      return res.status(400).json({
         success: false,
-        message: "No file was provided",
-      });
-    } else {
-      let property = new Property({
-        ...response,
-
-        image: req.file.filename,
-      });
-      const savedProperty = await property.save();
-      res.json({
-        success: true,
-        message: "Property added successfully",
-        property: savedProperty,
+        message: "Property image is required",
       });
     }
+
+    const property = new Property({
+      ...response,
+      image: req.file.filename,
+    });
+    const savedProperty = await property.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Property added successfully",
+      property: savedProperty,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: error.message, // Send the exact error message
+      message: error.message,
     });
   }
 };
@@ -69,9 +64,12 @@ exports.GetOneProperty = async (req, res) => {
 exports.replaceProperty = async (req, res) => {
   const id = req.params.id;
   try {
-    const property = await Property.findOneAndReplace({ _id: id }, req.body, {
-      new: true,
-    });
+    const response = normalizePropertyPayload(req.body);
+    const property = await Property.findOneAndReplace(
+      { _id: id },
+      response,
+      { new: true }
+    );
     res.json(property);
   } catch (error) {
     console.log(error);
@@ -82,21 +80,25 @@ exports.replaceProperty = async (req, res) => {
 //Update operation on document
 exports.updateProperty = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
+  const response = normalizePropertyPayload(req.body);
 
   if (req.file) {
     const property = await Property.findOneAndUpdate(
       { _id: id },
-      { ...req.body, image: req.file.filename },
+      { ...response, image: req.file.filename },
       {
         new: true,
       }
     );
     res.json(property);
   } else {
-    const property = await Property.findOneAndUpdate({ _id: id }, req.body, {
-      new: true,
-    });
+    const property = await Property.findOneAndUpdate(
+      { _id: id },
+      response,
+      {
+        new: true,
+      }
+    );
 
     res.json(property);
   }

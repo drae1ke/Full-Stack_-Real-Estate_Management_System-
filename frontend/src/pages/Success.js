@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { imageUrl } from "../api/client";
 
 function Success() {
-  const [date, setDate] = useState();
   const propertyRef = useRef(null);
   const navigate = useNavigate();
   const pay = JSON.parse(localStorage.getItem("Payed"));
@@ -107,7 +105,7 @@ function Success() {
               <p>Address: {pay?.order?.address}</p>
               <p>Price: {pay?.order?.sellMoney} Taka</p>
               <p>
-                Time: <DateFn dateString={pay?.order?.date} setDate={setDate} />
+                Time: <DateFn dateString={pay?.order?.date} />
               </p>
             </div>
           ))}
@@ -147,40 +145,27 @@ function Success() {
   );
 }
 
-function DateFn({ dateString, setDate: set }) {
-  const [ampm, setAmpm] = useState("am");
-  const [hours, setHour] = useState("");
-  const [date, setDate] = useState("");
-  const [min, setMin] = useState("");
+function DateFn({ dateString }) {
+  const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
-    const indexOfT = dateString.indexOf("T");
-    const result = dateString.substring(0, indexOfT); // Date
-    setDate(result);
-    const time = dateString.substring(indexOfT + 1);
-    const indexOfDot = time.indexOf(".");
-    const result2 = time.substring(0, indexOfDot); // The whole hour, min and sec
-    const lastHourIndex = result2.indexOf(":");
-    const result3 = result2.substring(0, lastHourIndex); // Hour in String
-    const result4 = result2.substring(lastHourIndex + 1);
-    setMin(result4);
-    let hour = Number(result3);
-    // Adjust for Bangladesh time (UTC+6)
-    hour += 6;
-    if (hour >= 24) {
-      hour -= 24; // Adjust for overflow
+    const parsedDate = new Date(dateString);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      setFormattedDate(dateString);
+      return;
     }
-    if (hour >= 12) {
-      setAmpm("pm");
-      setHour(String(hour % 12 || 12)); // Correctly handle 12 PM
-    } else {
-      setHour(String(hour));
-    }
+
+    setFormattedDate(
+      parsedDate.toLocaleString("en-KE", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Africa/Nairobi",
+      })
+    );
   }, [dateString]);
-  const orderDate = ` ${date} `;
-  const orderTime = ` ${hours}:${min} ${ampm}`;
-  set(`${orderDate} at ${orderTime}`);
-  return `${orderDate} at ${orderTime}`;
+
+  return formattedDate;
 }
 
 export default Success;

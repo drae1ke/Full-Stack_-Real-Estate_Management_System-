@@ -12,21 +12,22 @@ import Footer from "./Footer/Footer";
 const StyledAppLayout = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 `;
 
 const Main = styled.main`
-  background-color: white;
+  background:
+    radial-gradient(circle at top right, rgba(212, 184, 118, 0.08), transparent 26%),
+    linear-gradient(180deg, #f7fafc 0%, #ffffff 22%);
   flex-grow: 1;
-
-  overflow: scroll;
 `;
 
 const Container = styled.div`
-  max-width: 120rem;
+  width: min(120rem, calc(100% - 2rem));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 0;
 `;
 
 function AppLayout() {

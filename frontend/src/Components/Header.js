@@ -10,241 +10,202 @@ import { imageUrl } from "../api/client";
 import { getCategoryOptions } from "../utils/formatters";
 import { BRAND_NAME } from "../utils/siteContent";
 
-const HeaderWrapper = styled.header`
+const HeaderShell = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(20px);
+  background: rgba(250, 252, 255, 0.86);
+  border-bottom: 1px solid rgba(19, 34, 57, 0.08);
+`;
+
+const Inner = styled.div`
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 4rem;
-  padding: 1.2rem 4.8rem;
-  background-color: #2c2c2c;
-  border-bottom: 1px solid rgb(0, 128, 0);
+  gap: 1rem;
+  flex-wrap: wrap;
 
-  @media (max-width: 1470px) {
+  @media (max-width: 780px) {
     padding: 1rem;
   }
 `;
 
-const SiteName = styled.button`
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #fff;
-  background: transparent;
+const BrandButton = styled.button`
   border: none;
-  transition: color 0.3s ease, font-size 0.3s ease;
-  font-style: italic;
-
-  &:hover {
-    color: #28a745;
-    font-size: 2.2rem;
-  }
+  background: transparent;
+  color: #132239;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  font-family: "Fraunces", Georgia, serif;
 `;
 
-const Name = styled.span`
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  font-style: italic;
-`;
-
-const NavLinks = styled.nav`
-  justify-content: center;
-  align-items: center;
+const Nav = styled.nav`
   display: flex;
-  gap: 2rem;
-
-  @media (max-width: 1470px) {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 `;
 
 const NavLink = styled(Link)`
-  text-decoration: none;
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  min-height: 2.8rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  color: #29415f;
+  font-weight: 700;
+  background: rgba(19, 34, 57, 0.04);
+  transition: background 160ms ease, color 160ms ease;
 
   &:hover {
-    color: rgb(0, 100, 0);
-  }
-
-  @media (max-width: 1470px) {
-    font-size: 1rem;
+    background: rgba(19, 34, 57, 0.08);
+    color: #132239;
   }
 `;
 
-const NavLinkPrimary = styled(Link)`
-  text-decoration: none;
-  color: #fff;
-  background-color: #007bff;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.25rem;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-
-  @media (max-width: 1470px) {
-    font-size: 1rem;
-  }
+const AccentLink = styled(Link)`
+  min-height: 2.8rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  font-weight: 800;
+  background: linear-gradient(135deg, #132239, #27446a);
 `;
 
-const UserImage = styled.img`
+const CategorySelect = styled.select`
+  min-height: 2.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 34, 57, 0.12);
+  background: white;
+  padding: 0 0.95rem;
+  color: #29415f;
+  font-weight: 700;
+`;
+
+const UserMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 0.2rem;
+`;
+
+const UserName = styled.div`
+  color: #49607a;
+  font-weight: 700;
+`;
+
+const Avatar = styled.img`
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
   object-fit: cover;
-  width: 85%;
-  height: 85%;
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 100%;
-`;
-
-const StyledSelect = styled.select`
-  font-size: 1rem;
-  padding: 0.5rem;
-  width: 14rem;
-  height: 3rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f8f8f8;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  &:focus {
-    outline: none;
-    border-color: #4caf50;
-  }
-`;
-
-const PicDiv = styled.div`
-  height: 4rem;
-  width: 4rem;
-  border-radius: 100%;
+  border: 2px solid rgba(19, 34, 57, 0.1);
 `;
 
 function Header() {
-  const [selectedCat, setSelectedCat] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    applySearchResults,
-    applyCategoryFilter,
-  } = useContext(SearchContext);
+  const { applySearchResults, applyCategoryFilter } = useContext(SearchContext);
   const { user } = useContext(UserContext);
-  const showSearchCategory = location.pathname === "/property";
+  const showCategoryFilter = location.pathname === "/property";
+  const isAdmin = user?.role === "admin";
+  const isUser = user?.role === "user";
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
         setCategories(getCategoryOptions(data));
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
         setCategories(getCategoryOptions());
       }
     };
 
     fetchCategories();
-  }, [location.pathname]);
+  }, []);
 
-  const handleHeaderClick = async () => {
+  const handleBrandClick = async () => {
     const response = await getProperty();
     applySearchResults(response);
     applyCategoryFilter("");
-    setSelectedCat("");
+    setSelectedCategory("");
     navigate("/");
   };
 
-  async function handleCatChange(event) {
-    const selectedCategoryName = event.target.value;
+  const handleCategoryChange = async (event) => {
+    const nextCategory = event.target.value;
 
-    if (selectedCategoryName === "__manage_categories__") {
-      navigate("/category");
-      return;
-    }
-
-    if (!selectedCategoryName) {
+    if (!nextCategory) {
       const response = await getProperty();
       applySearchResults(response);
       applyCategoryFilter("");
-      setSelectedCat("");
+      setSelectedCategory("");
       return;
     }
 
-    setSelectedCat(selectedCategoryName);
-
-    const results = await searchByCategory({
-      categoryFilter: selectedCategoryName,
-    });
-
+    setSelectedCategory(nextCategory);
+    applyCategoryFilter(nextCategory);
+    const results = await searchByCategory({ categoryFilter: nextCategory });
     applySearchResults(results);
-    applyCategoryFilter(selectedCategoryName);
-  }
-
-  const isAdmin = user?.role === "admin";
-  const isUser = user?.role === "user";
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  };
 
   return (
-    <HeaderWrapper>
-      <div>
-        <SiteName type="button" onClick={handleHeaderClick}>
+    <HeaderShell>
+      <Inner>
+        <BrandButton type="button" onClick={handleBrandClick}>
           {BRAND_NAME}
-        </SiteName>
-      </div>
-      <NavLinks>
-        <NavLink to="/">Home</NavLink>
-        {isAdmin && <NavLink to="/dashboard">Dashboard</NavLink>}
-        {isAdmin && <NavLink to="/visit">Visits</NavLink>}
-        <NavLink to="/property">Properties</NavLink>
-        {isAdmin && <NavLink to="/addProduct">Manage Listings</NavLink>}
-        {showSearchCategory && (
-          <StyledSelect value={selectedCat} onChange={handleCatChange}>
-            <option value="">
-              {selectedCat ? "Show all listings" : "Filter by category"}
-            </option>
-            {categories.map((category) => (
-              <option key={category._id} value={category.category}>
-                {category.category}
-              </option>
-            ))}
-            {isAdmin && (
-              <option value="__manage_categories__">Manage Categories</option>
-            )}
-          </StyledSelect>
-        )}
-        {isUser && <NavLink to="/userOrder">Order History</NavLink>}
-        <NavLink to="/contact">Contact Us</NavLink>
-        {user?.role !== "visitor" && (
-          <Name>
-            {user?.name}
-            {user?.role === "admin" && " (Admin)"}
-          </Name>
-        )}
-        {user?.role !== "visitor" && (
-          <PicDiv>
-            <UserImage src={imageUrl(user?.image)} alt={user?.name} />
-          </PicDiv>
-        )}
+        </BrandButton>
 
-        {user?.role === "visitor" ? (
-          <NavLinkPrimary to="/login">Sign in</NavLinkPrimary>
-        ) : (
-          <Logout />
-        )}
-      </NavLinks>
-    </HeaderWrapper>
+        <Nav>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/property">Availability</NavLink>
+          {isAdmin && <NavLink to="/dashboard">Dashboard</NavLink>}
+          {isAdmin && (
+            <NavLink to="/admin/properties#property-management">
+              Properties & Tenants
+            </NavLink>
+          )}
+          {isAdmin && <NavLink to="/visit">Visits</NavLink>}
+          {isUser && <NavLink to="/resident">Resident Portal</NavLink>}
+          <NavLink to="/contact">Contact</NavLink>
+
+          {showCategoryFilter && (
+            <CategorySelect value={selectedCategory} onChange={handleCategoryChange}>
+              <option value="">Filter by category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category.category}>
+                  {category.category}
+                </option>
+              ))}
+            </CategorySelect>
+          )}
+
+          {user?.role !== "visitor" && (
+            <UserMeta>
+              <UserName>{`${user?.name || ""}${isAdmin ? " - Admin" : ""}`}</UserName>
+              {user?.image && <Avatar src={imageUrl(user.image)} alt={user.name} />}
+            </UserMeta>
+          )}
+
+          {user?.role === "visitor" ? (
+            <AccentLink to="/login">Sign In</AccentLink>
+          ) : (
+            <Logout />
+          )}
+        </Nav>
+      </Inner>
+    </HeaderShell>
   );
 }
 

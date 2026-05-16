@@ -4,7 +4,6 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const path = require("path");
 
 const categoryRouter = require("./routes/category");
@@ -15,36 +14,15 @@ const authRouter = require("./routes/auth");
 const orderRouter = require("./routes/order");
 const paymentRouter = require("./routes/payment");
 const visitRouter = require("./routes/visit");
+const rentalRouter = require("./routes/rental");
 const { ensureDefaultCategories } = require("./utils/ensureDefaultCategories");
+const { auth } = require("./middleware/auth");
 
 const server = express();
 
 const PORT = Number(process.env.PORT) || 8080;
 const MONGO_URI =
   process.env.MONGO_URI || "mongodb://127.0.0.1:27017/realstate";
-const JWT_SECRET = process.env.JWT_SECRET || "change_me_in_local_dev";
-
-const auth = (req, res, next) => {
-  const token = req.get("Authorization")?.split("Bearer ")[1];
-
-  if (!token) {
-    return res.sendStatus(401);
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    if (!decoded.email) {
-      return res.sendStatus(401);
-    }
-
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.sendStatus(401);
-  }
-};
-
 server.use("/images", express.static(path.join(__dirname, "Images")));
 server.use(cors({ origin: "*" }));
 server.use(express.json());
@@ -62,6 +40,7 @@ server.use("/users", auth, userRouter.router);
 server.use("/payment", auth, paymentRouter.paymentRouter);
 server.use("/visit", visitRouter.visitRouter);
 server.use("/orders", auth, orderRouter.orderRouter);
+server.use("/rental", rentalRouter.rentalRouter);
 
 async function start() {
   await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 });

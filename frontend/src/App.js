@@ -10,7 +10,7 @@ import AddProduct from "./pages/AddProperty";
 import { CartProvider } from "./context/CartContext";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
-import UserOrder from "./pages/UserOrder";
+import ResidentPortal from "./pages/ResidentPortal";
 import AdminOrder from "./pages/AdminOrder";
 import Edit from "./pages/Edit";
 import AddCategory from "./pages/AddCategory";
@@ -28,6 +28,16 @@ function AdminRoute({ children }) {
   return children;
 }
 
+function UserRoute({ children }) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  if (user?.role !== "user") {
+    return <PageNotFound />;
+  }
+
+  return children;
+}
+
 function App() {
   return (
     <CartProvider>
@@ -36,13 +46,22 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Website />} />
             <Route path="/property" element={<Products />} />
+            <Route path="/property/:id" element={<ProductDetail />} />
             <Route path="/:id" element={<ProductDetail />} />
-            {<Route path="contact" element={<Contactus />} />}
+            <Route path="contact" element={<Contactus />} />
             <Route
               path="dashboard"
               element={
                 <AdminRoute>
                   <Dashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="operations"
+              element={
+                <AdminRoute>
+                  <AddProduct />
                 </AdminRoute>
               }
             />
@@ -54,9 +73,48 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="admin/operations"
+              element={
+                <AdminRoute>
+                  <AddProduct />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="admin/properties"
+              element={
+                <AdminRoute>
+                  <AddProduct />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="admin/tenants"
+              element={
+                <AdminRoute>
+                  <AddProduct />
+                </AdminRoute>
+              }
+            />
             <Route path="success" element={<Success />} />
             <Route path="cancel" element={<Cancel />} />
-            <Route path="userOrder" element={<UserOrder />} />
+            <Route
+              path="resident"
+              element={
+                <UserRoute>
+                  <ResidentPortal />
+                </UserRoute>
+              }
+            />
+            <Route
+              path="userOrder"
+              element={
+                <UserRoute>
+                  <ResidentPortal />
+                </UserRoute>
+              }
+            />
             <Route
               path="category"
               element={

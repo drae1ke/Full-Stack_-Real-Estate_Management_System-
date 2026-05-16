@@ -1,87 +1,152 @@
 import { useState } from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 import LoginForm from "../Components/LoginForm";
 import SignUpFrom from "../Components/SignUpFrom";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 
-const PicContainer = styled.div`
-  height: 100vh;
-  position: relative;
+const Page = styled.div`
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top right, rgba(212, 184, 118, 0.2), transparent 34%),
+    linear-gradient(135deg, #132239 0%, #203654 100%);
 `;
 
-const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border: 2px solid blue;
-  /* margin: 100px auto; */
-`;
+const Card = styled.section`
+  width: min(100%, 64rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 34px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 28px 80px rgba(7, 19, 35, 0.24);
 
-const SpanContainer = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const Span = styled.div`
-  cursor: pointer;
-  font-weight: 750;
-  color: blue;
-`;
-
-const Span2 = styled.div`
-  cursor: pointer;
-  font-size: 2rem;
-  font-weight: 750;
-  color: white;
-  background-color: green;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
-  border-radius: 20px;
-  position: absolute;
-  top: 5rem;
-  right: 5rem;
-  transition: padding-left 0.3s ease, padding-right 0.3s ease,
-    padding-top 0.3s ease, padding-bottom 0.3s ease;
-  &:hover {
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 0.7rem;
-    padding-top: 0.7rem;
+  @media (max-width: 880px) {
+    grid-template-columns: 1fr;
   }
 `;
 
-function Login() {
-  const [set, setSet] = useState(false);
-  const navigate = useNavigate();
+const Panel = styled.div`
+  padding: 2rem;
+`;
 
-  const handleClick = () => {
-    navigate("/");
-  };
+const BrandPanel = styled(Panel)`
+  background:
+    radial-gradient(circle at top right, rgba(212, 184, 118, 0.18), transparent 34%),
+    linear-gradient(135deg, #132239 0%, #203654 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const Eyebrow = styled.span`
+  color: #f2d489;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.82rem;
+`;
+
+const Title = styled.h1`
+  margin: 0.9rem 0 0;
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.04;
+  font-family: "Fraunces", Georgia, serif;
+`;
+
+const Description = styled.p`
+  margin: 1rem 0 0;
+  color: rgba(237, 243, 251, 0.78);
+  line-height: 1.75;
+`;
+
+const PortalTag = styled.div`
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(237, 243, 251, 0.86);
+  font-weight: 700;
+  margin-top: 1.25rem;
+`;
+
+const HomeLink = styled(Link)`
+  width: fit-content;
+  min-height: 3rem;
+  padding: 0 1.15rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+`;
+
+const FormPanel = styled(Panel)`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  justify-content: center;
+`;
+
+const FormTitle = styled.h2`
+  margin: 0;
+  color: #132239;
+  font-size: 2rem;
+`;
+
+const Toggle = styled.button`
+  border: none;
+  background: none;
+  padding: 0;
+  color: #17345e;
+  font-weight: 800;
+  cursor: pointer;
+  width: fit-content;
+`;
+
+function Login() {
+  const [showRegistration, setShowRegistration] = useState(false);
+
   return (
-    <PicContainer>
-      <FormContainer>
-        <div>{!set ? <LoginForm /> : <SignUpFrom setSet={setSet} />}</div>
-        <SpanContainer>
-          <Span onClick={(e) => setSet(!set)}>
-            {set ? "Click Here For Login" : "Click Here For Registration"}
-          </Span>
-        </SpanContainer>
-      </FormContainer>
-      <Span2 onClick={handleClick}>Visit Our Page</Span2>
-    </PicContainer>
+    <Page>
+      <Card>
+        <BrandPanel>
+          <div>
+            <Eyebrow>Client and Admin Access</Eyebrow>
+            <Title>Manage property relationships with more confidence</Title>
+            <Description>
+              Sign in to review availability, submit bookings, monitor rent
+              records, and operate the full property management workspace from a
+              cleaner, more professional interface.
+            </Description>
+            <PortalTag>Secure portfolio access</PortalTag>
+          </div>
+          <HomeLink to="/">Return to website</HomeLink>
+        </BrandPanel>
+
+        <FormPanel>
+          <div>
+            <FormTitle>{showRegistration ? "Create account" : "Welcome back"}</FormTitle>
+          </div>
+
+          {showRegistration ? (
+            <SignUpFrom setSet={setShowRegistration} />
+          ) : (
+            <LoginForm />
+          )}
+
+          <Toggle onClick={() => setShowRegistration((current) => !current)}>
+            {showRegistration
+              ? "Already have an account? Sign in"
+              : "Need an account? Register here"}
+          </Toggle>
+        </FormPanel>
+      </Card>
+    </Page>
   );
 }
 
