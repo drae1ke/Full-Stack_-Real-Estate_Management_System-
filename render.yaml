@@ -1,0 +1,7 @@
+services:
+  - type: static
+    name: frontend
+    env: static
+    branch: main
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/build
