@@ -48,6 +48,12 @@ const paymentRecordSchema = new Schema(
     reference: String,
     verifiedBy: String,
     notes: String,
+    phoneNumber: String,
+    mpesaReceiptNumber: String,
+    checkoutRequestId: String,
+    merchantRequestId: String,
+    resultCode: Number,
+    resultDescription: String,
   },
   { timestamps: true }
 );
