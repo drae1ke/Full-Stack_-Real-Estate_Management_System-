@@ -29,6 +29,9 @@
     "eject": "react-scripts eject",
     "deploy:netlify": "npm run build && npx netlify deploy --prod --dir=build"
   },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
