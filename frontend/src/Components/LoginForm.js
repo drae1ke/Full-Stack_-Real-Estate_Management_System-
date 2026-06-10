@@ -49,24 +49,39 @@ function LoginForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const response = await fetch(apiUrl("/auth/login"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const response = await fetch(apiUrl("/auth/login"), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      if (!response.ok) {
+        const text = await response.text();
+        alert(`Login failed: ${response.status} ${response.statusText}\n${text.slice(0,200)}`);
+        return;
+      }
 
-    const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        alert('Unexpected response format from server.');
+        return;
+      }
 
-    if (response.status === 401 || !data.token) {
-      alert("Wrong password or email");
-      return;
+      if (response.status === 401 || !data.token) {
+        alert("Wrong password or email");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate(data?.role === "admin" ? "/dashboard" : "/");
+    } catch (err) {
+      alert('Network error: ' + err.message);
     }
-
-    localStorage.setItem("user", JSON.stringify(data));
-    navigate(data?.role === "admin" ? "/dashboard" : "/");
   };
 
   return (
