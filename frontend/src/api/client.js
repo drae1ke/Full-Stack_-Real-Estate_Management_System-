@@ -1,5 +1,6 @@
+const _RAW_API_BASE = process.env.REACT_APP_API_URL;
 const API_BASE_URL = (
-  process.env.REACT_APP_API_URL || ""
+  _RAW_API_BASE && _RAW_API_BASE !== "undefined" ? _RAW_API_BASE : ""
 ).replace(/\/$/, "");
 
 export function apiUrl(path = "") {
