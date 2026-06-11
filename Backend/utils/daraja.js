@@ -4,6 +4,7 @@ const DARAJA_BASE_URL =
   process.env.DARAJA_ENV === "production"
     ? "https://api.safaricom.co.ke"
     : "https://sandbox.safaricom.co.ke";
+const IS_PRODUCTION_DARAJA = process.env.DARAJA_ENV === "production";
 
 const CONSUMER_KEY = process.env.DARAJA_CONSUMER_KEY || "";
 const CONSUMER_SECRET = process.env.DARAJA_CONSUMER_SECRET || "";
@@ -11,11 +12,44 @@ const SHORTCODE = process.env.DARAJA_SHORTCODE || "174379";
 const PASSKEY =
   process.env.DARAJA_PASSKEY ||
   "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+const APP_BASE_URL = (
+  process.env.API_BASE_URL ||
+  process.env.RENDER_EXTERNAL_URL ||
+  ""
+).replace(/\/$/, "");
 const CALLBACK_URL =
   process.env.DARAJA_CALLBACK_URL ||
-  "https://yourdomain.com/rental/mpesa/callback";
+  (APP_BASE_URL ? `${APP_BASE_URL}/rental/mpesa/callback` : "");
 
 let _tokenCache = { token: null, expiresAt: 0 };
+
+function validateDarajaConfig() {
+  const missing = [];
+
+  if (!CONSUMER_KEY) missing.push("DARAJA_CONSUMER_KEY");
+  if (!CONSUMER_SECRET) missing.push("DARAJA_CONSUMER_SECRET");
+  if (!SHORTCODE || (IS_PRODUCTION_DARAJA && !process.env.DARAJA_SHORTCODE)) {
+    missing.push("DARAJA_SHORTCODE");
+  }
+  if (!PASSKEY || (IS_PRODUCTION_DARAJA && !process.env.DARAJA_PASSKEY)) {
+    missing.push("DARAJA_PASSKEY");
+  }
+  if (!CALLBACK_URL) missing.push("DARAJA_CALLBACK_URL or API_BASE_URL");
+
+  if (missing.length) {
+    throw new Error(`M-Pesa is not configured. Set ${missing.join(", ")} on the backend.`);
+  }
+
+  try {
+    const callback = new URL(CALLBACK_URL);
+
+    if (callback.protocol !== "https:") {
+      throw new Error("Callback URL must use HTTPS.");
+    }
+  } catch {
+    throw new Error("M-Pesa callback URL must be a valid HTTPS URL.");
+  }
+}
 
 async function fetchJson(url, options = {}) {
   return new Promise((resolve, reject) => {
@@ -56,6 +90,8 @@ async function fetchJson(url, options = {}) {
 }
 
 async function getAccessToken() {
+  validateDarajaConfig();
+
   if (_tokenCache.token && Date.now() < _tokenCache.expiresAt) {
     return _tokenCache.token;
   }

@@ -40,14 +40,24 @@ Backend values:
 - `JWT_SECRET`
 - `CLIENT_URL`
 - `STRIPE_SECRET_KEY`
+- `API_BASE_URL`
+- `DARAJA_ENV`
+- `DARAJA_CONSUMER_KEY`
+- `DARAJA_CONSUMER_SECRET`
+- `DARAJA_SHORTCODE`
+- `DARAJA_PASSKEY`
+- `DARAJA_CALLBACK_URL`
 
 Frontend values:
 
 - `REACT_APP_API_URL`
 
+For Render M-Pesa STK Push, set the backend values with your Safaricom Daraja app credentials. `API_BASE_URL` should be the public backend URL, for example `https://full-stack-real-estate-management-system.onrender.com`. If you set `DARAJA_CALLBACK_URL` directly, use `https://full-stack-real-estate-management-system.onrender.com/rental/mpesa/callback`.
+
 ## Notes
 
 - Checkout requires a valid Stripe secret key.
+- M-Pesa STK Push requires valid Daraja credentials and a public HTTPS callback URL.
 - The backend expects a running MongoDB instance unless you point `MONGO_URI` at Atlas.
 - Project screenshots now live under `frontend/public/screenshots/`.
 
