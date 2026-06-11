@@ -76,6 +76,15 @@ function normalizeAmount(value) {
   return amount;
 }
 
+function logSTKPushError(source, error, req) {
+  console.error(`${source} STK Push failed:`, {
+    message: error.message,
+    userId: req.user?.id,
+    userEmail: req.user?.email,
+    tenantId: req.body?.tenantId,
+  });
+}
+
 async function resolvePropertyContext(propertyId, unitId) {
   if (!propertyId) {
     return {};
@@ -231,6 +240,7 @@ exports.adminInitiateSTKPush = async (req, res) => {
       merchantRequestId: initiationResponse.MerchantRequestID,
     });
   } catch (error) {
+    logSTKPushError("Admin", error, req);
     return res.status(400).json({ message: error.message });
   }
 };
@@ -263,6 +273,7 @@ exports.residentInitiateSTKPush = async (req, res) => {
       merchantRequestId: initiationResponse.MerchantRequestID,
     });
   } catch (error) {
+    logSTKPushError("Resident", error, req);
     return res.status(400).json({ message: error.message });
   }
 };
